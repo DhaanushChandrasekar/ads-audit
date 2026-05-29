@@ -1,0 +1,2004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdScope Audit Pro – Multi-API Google Ads Auditing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Barlow+Condensed:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #060b12;
+            --bg-darker: #0a1120;
+            --bg-card: #0a1120;
+            --border: #0e1826;
+            --text-primary: #f0f4ff;
+            --text-secondary: #9ca3af;
+            --text-muted: #4b5563;
+            --accent-blue: #3b82f6;
+            --accent-light: #93c5fd;
+            --accent-dark: #1d4ed8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --purple: #7c3aed;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+        }
+
+        body {
+            font-family: 'Barlow', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes pulse { 0%, 100% { opacity: .4; } 50% { opacity: 1; } }
+        @keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
+
+        .fade-up { animation: fadeUp 0.35s ease forwards; }
+        .slide-in { animation: slideIn 0.3s ease forwards; }
+
+        /* Header */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 13px 24px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(7, 12, 20, 0.8);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            font-family: 'Barlow Condensed', sans-serif;
+            color: #e2e8f0;
+        }
+
+        .logo-accent {
+            color: var(--accent-blue);
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #2d3748;
+            transition: color 0.25s;
+        }
+
+        .nav-item.active {
+            color: var(--accent-light);
+            font-weight: 700;
+        }
+
+        .nav-dot {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            background: #0e1826;
+            border: 1px solid transparent;
+            transition: all 0.25s;
+            color: #374151;
+        }
+
+        .nav-dot.active {
+            background: #1e3a6e;
+            border: 1px solid var(--accent-blue);
+            color: #fff;
+            box-shadow: 0 0 14px rgba(59, 130, 246, 0.35);
+        }
+
+        .nav-dot.complete {
+            background: var(--accent-blue);
+            color: #fff;
+        }
+
+        .nav-sep {
+            width: 20px;
+            height: 1px;
+            background: #0e1826;
+            margin: 0 2px;
+        }
+
+        /* Main */
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 32px 18px 72px;
+        }
+
+        /* Error Bar */
+        .error-bar {
+            display: flex;
+            align-items: center;
+            background: rgba(239, 68, 68, 0.07);
+            border: 1px solid rgba(239, 68, 68, 0.22);
+            color: #fca5a5;
+            padding: 11px 16px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            font-size: 13px;
+            gap: 8px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .error-bar button {
+            background: none;
+            border: none;
+            color: #fca5a5;
+            cursor: pointer;
+            margin-left: auto;
+            font-size: 16px;
+            padding: 0;
+            transition: opacity 0.2s;
+        }
+
+        .error-bar button:hover {
+            opacity: 0.7;
+        }
+
+        /* Page Header */
+        .page-head {
+            margin-bottom: 20px;
+        }
+
+        .step-tag {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: #1e3a5f;
+            margin-bottom: 6px;
+            font-family: 'Barlow Condensed', sans-serif;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 800;
+            margin: 0 0 4px;
+            color: var(--text-primary);
+            font-family: 'Barlow Condensed', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            color: #374151;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 14px;
+        }
+
+        .card.highlight {
+            border-color: var(--accent-dark);
+            background: rgba(29, 78, 216, 0.04);
+        }
+
+        /* Forms */
+        .form-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group.full {
+            grid-template-columns: 1fr;
+        }
+
+        .input-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            display: block;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            background: #060b12;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 11px 14px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: 'Barlow', sans-serif;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 22px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Barlow', sans-serif;
+            letter-spacing: 0.3px;
+            transition: all 0.15s;
+        }
+
+        .btn:hover:not(:disabled) {
+            filter: brightness(1.18);
+        }
+
+        .btn:active:not(:disabled) {
+            transform: scale(0.97);
+        }
+
+        .btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: rgba(37, 99, 235, 0.12);
+            border-color: #1d4ed8;
+            color: var(--accent-light);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border-color: var(--border);
+            color: #374151;
+        }
+
+        .btn-demo {
+            background: rgba(245, 158, 11, 0.08);
+            border-color: rgba(245, 158, 11, 0.25);
+            color: #fbbf24;
+        }
+
+        .btn-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        /* Upload Zone */
+        .upload-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 13px 16px;
+            background: #060b12;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .upload-row:hover {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.15);
+        }
+
+        .upload-row input[type="file"] {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 24px;
+            min-width: 32px;
+            text-align: center;
+        }
+
+        .upload-info {
+            flex: 1;
+        }
+
+        .upload-label {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 3px;
+        }
+
+        .upload-required {
+            display: inline-block;
+            background: rgba(239, 68, 68, 0.08);
+            color: var(--danger);
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-left: 8px;
+        }
+
+        .upload-path {
+            font-size: 12px;
+            color: var(--accent-blue);
+            margin-bottom: 2px;
+        }
+
+        .upload-hint {
+            font-size: 11px;
+            color: #2d3748;
+        }
+
+        .upload-status {
+            padding: 8px 14px;
+            border-radius: 7px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+            background: rgba(59, 130, 246, 0.06);
+            color: var(--accent-blue);
+            border: 1px solid #1e3a5f;
+        }
+
+        .upload-status.ready {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border-color: var(--success);
+        }
+
+        /* Analysis Spinner */
+        .analysis-spinner {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 32px;
+        }
+
+        .analysis-ring {
+            position: absolute;
+            inset: 0;
+            border: 3px solid transparent;
+            border-radius: 50%;
+            border-top-color: var(--accent-blue);
+            animation: spin 1s linear infinite;
+        }
+
+        .analysis-ring:nth-child(2) {
+            inset: 8px;
+            border-top-color: #6366f1;
+            animation: spin 1.4s linear infinite reverse;
+        }
+
+        .analysis-message {
+            text-align: center;
+            padding: 72px 40px;
+        }
+
+        .analysis-message h2 {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .analysis-message p {
+            color: #6b7a99;
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+
+        .analysis-dots {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .analysis-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            animation: pulse 1.2s ease infinite;
+        }
+
+        /* Results Banner */
+        .results-banner {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            background: var(--bg-darker);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 22px 24px;
+            margin-bottom: 14px;
+        }
+
+        .grade-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 100px;
+            background: #060b12;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px 18px;
+        }
+
+        .grade-large {
+            font-size: 60px;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 4px;
+            font-family: 'Barlow Condensed', sans-serif;
+        }
+
+        .grade-label {
+            font-size: 11px;
+            color: #4b5563;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 4px;
+        }
+
+        .grade-score {
+            font-size: 28px;
+            font-weight: 800;
+            margin-top: 4px;
+        }
+
+        .results-summary {
+            flex: 1;
+        }
+
+        .results-summary-tag {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+        }
+
+        .results-summary-text {
+            color: #9ca3af;
+            line-height: 1.75;
+            margin: 0 0 14px;
+            font-size: 15px;
+        }
+
+        .results-metrics {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .metric-badge {
+            padding: 8px 14px;
+            background: rgba(59, 130, 246, 0.07);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 7px;
+            font-size: 13px;
+            color: #93c5fd;
+        }
+
+        .metric-badge.danger {
+            background: rgba(239, 68, 68, 0.07);
+            border-color: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+
+        /* Score Cards Grid */
+        .score-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .score-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .score-card {
+            background: var(--bg-darker);
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            padding: 17px 18px;
+            transition: all 0.2s;
+        }
+
+        .score-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .score-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .score-card-label {
+            font-size: 12px;
+            color: #6b7a99;
+            font-weight: 600;
+            flex: 1;
+            padding-right: 8px;
+        }
+
+        .score-card-value {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .score-number {
+            font-size: 26px;
+            font-weight: 800;
+            line-height: 1;
+            font-family: 'Barlow Condensed', sans-serif;
+        }
+
+        .score-max {
+            font-size: 11px;
+            color: #374151;
+        }
+
+        .score-status {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+
+        .score-bar {
+            height: 3px;
+            background: var(--border);
+            border-radius: 4px;
+            margin-bottom: 14px;
+            overflow: hidden;
+        }
+
+        .score-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            width: 0%;
+            animation: expand 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes expand {
+            from { width: 0%; }
+            to { width: var(--fill, 50%); }
+        }
+
+        .finding {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border);
+        }
+
+        .finding:first-of-type {
+            margin-top: 0;
+            padding-top: 0;
+            border-top: none;
+        }
+
+        .finding-type {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 3px;
+        }
+
+        .finding-type.critical {
+            color: var(--danger);
+        }
+
+        .finding-type.warning {
+            color: var(--warning);
+        }
+
+        .finding-type.good {
+            color: var(--success);
+        }
+
+        .finding-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #d1d5db;
+            line-height: 1.3;
+        }
+
+        .finding-detail {
+            font-size: 11px;
+            color: #4b5563;
+            margin-top: 2px;
+            line-height: 1.5;
+        }
+
+        /* Priorities */
+        .priority-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 13px 16px;
+            background: #060b12;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            margin-bottom: 8px;
+        }
+
+        .priority-number {
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--accent-blue);
+            min-width: 36px;
+            font-family: 'Barlow Condensed', sans-serif;
+        }
+
+        .priority-content {
+            flex: 1;
+        }
+
+        .priority-action {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e5e7eb;
+        }
+
+        .priority-impact {
+            font-size: 12px;
+            color: #4b5563;
+            margin-top: 3px;
+        }
+
+        .priority-effort {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .priority-effort.low {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .priority-effort.medium {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .priority-effort.high {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        /* Export Cards */
+        .export-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .export-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .export-card {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            background: var(--bg-darker);
+        }
+
+        .export-icon {
+            font-size: 44px;
+            margin-bottom: 4px;
+        }
+
+        .export-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .export-desc {
+            font-size: 13px;
+            color: #4b5563;
+            line-height: 1.65;
+            margin: 0;
+        }
+
+        .export-features {
+            font-size: 11px;
+            color: #2d3748;
+            margin-bottom: 12px;
+        }
+
+        .export-features li {
+            margin-bottom: 4px;
+        }
+
+        .export-divider {
+            padding: 12px 0;
+            border-top: 1px solid var(--border);
+            margin: auto 0 0;
+        }
+
+        /* Hidden Sections */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Step Sections */
+        section {
+            animation: fadeUp 0.35s ease forwards;
+        }
+
+        /* Config Input Area */
+        .api-config {
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .api-config-title {
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--accent-light);
+        }
+
+        .api-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .api-toggle input[type="radio"] {
+            cursor: pointer;
+        }
+
+        .api-hint {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            display: block;
+        }
+
+        /* Loading State */
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-top-color: var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Success/Info Box */
+        .info-box {
+            padding: 16px;
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 8px;
+            color: var(--accent-light);
+            font-size: 13px;
+            margin-bottom: 14px;
+            line-height: 1.6;
+        }
+
+        .info-box strong {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <path d="M11 2L13.5 8.5H20.5L14.5 12.5L16.5 19L11 15L5.5 19L7.5 12.5L1.5 8.5H8.5L11 2Z" fill="#3b82f6"/>
+            </svg>
+            <span>AdScope <span class="logo-accent">Audit</span></span>
+        </div>
+        <nav id="nav-steps"></nav>
+    </header>
+
+    <main>
+        <!-- Error Bar -->
+        <div id="error-bar" class="error-bar hidden">
+            <span id="error-text"></span>
+            <button onclick="app.clearError()">✕</button>
+        </div>
+
+        <!-- STEP 0: Setup -->
+        <section id="step-0" class="fade-up">
+            <div class="page-head">
+                <div class="step-tag">Step 01</div>
+                <h1>Account Details</h1>
+                <p class="subtitle">Context for the audit report and sales pitch document</p>
+            </div>
+            <div class="card">
+                <div class="form-group">
+                    <div class="input-field">
+                        <label>Your Agency Name</label>
+                        <input type="text" id="cfg-agency" placeholder="e.g. Apex Digital">
+                    </div>
+                    <div class="input-field">
+                        <label>Core Service Offered</label>
+                        <input type="text" id="cfg-service" placeholder="e.g. Google Ads Management" value="Google Ads Management">
+                    </div>
+                    <div class="input-field">
+                        <label>Client / Company Name</label>
+                        <input type="text" id="cfg-client" placeholder="e.g. Acme Corp">
+                    </div>
+                    <div class="input-field">
+                        <label>Client Industry</label>
+                        <input type="text" id="cfg-industry" placeholder="e.g. E-commerce, Legal, SaaS…">
+                    </div>
+                </div>
+                <div class="api-config">
+                    <div class="api-config-title">🔑 AI Analysis API</div>
+                    <div class="info-box" style="margin-bottom: 12px;">
+                        <strong>Choose your AI provider</strong>
+                        Add any API key you have: ChatGPT/OpenAI, Claude/Anthropic, Gemini, or OpenRouter. This version sends up to 1,000 rows per uploaded report.
+                    </div>
+                    <div class="api-toggle">
+                        <label>
+                            <input type="radio" name="api-choice" value="openai" checked onchange="app.setApiProvider('openai')">
+                            ChatGPT API / OpenAI
+                        </label>
+                    </div>
+                    <div class="api-toggle">
+                        <label>
+                            <input type="radio" name="api-choice" value="anthropic" onchange="app.setApiProvider('anthropic')">
+                            Claude API / Anthropic
+                        </label>
+                    </div>
+                    <div class="api-toggle">
+                        <label>
+                            <input type="radio" name="api-choice" value="gemini" onchange="app.setApiProvider('gemini')">
+                            Gemini API
+                        </label>
+                    </div>
+                    <div class="api-toggle">
+                        <label>
+                            <input type="radio" name="api-choice" value="openrouter" onchange="app.setApiProvider('openrouter')">
+                            OpenRouter API
+                        </label>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0; margin-top: 12px;">
+                        <div class="input-field">
+                            <label id="api-key-label">OpenAI API Key</label>
+                            <input type="password" id="api-key" placeholder="Enter your OpenAI API key">
+                            <span class="api-hint" id="api-key-hint">
+                                Get your key from the OpenAI Platform. Keep this file for internal/local use only, because browser-based API keys can be viewed in developer tools.
+                            </span>
+                        </div>
+                        <div class="input-field">
+                            <label id="api-model-label">OpenAI Model</label>
+                            <input type="text" id="api-model" value="gpt-5.4-mini" placeholder="e.g. gpt-5.4-mini">
+                            <span class="api-hint" id="api-model-hint">Recommended: gpt-5.4-mini for lower cost, or gpt-5.5 for highest quality.</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top: 28px; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button class="btn btn-secondary" onclick="app.loadSampleData()">⚡ Load Sample Data</button>
+                    <button class="btn btn-primary" id="btn-step0-next" disabled>
+                        Continue →
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- STEP 1: Upload -->
+        <section id="step-1" class="fade-up hidden">
+            <div class="page-head">
+                <div class="step-tag">Step 02</div>
+                <h1>Upload Data</h1>
+                <p class="subtitle">Export reports from Google Ads as CSV or Excel</p>
+            </div>
+            <div class="card">
+                <div style="margin-bottom: 14px;">
+                    <div style="font-size: 13px; color: #4b5563; margin-bottom: 12px;">
+                        📌 Export each report as CSV or Excel from Google Ads and upload below
+                    </div>
+                </div>
+                <div id="upload-slots"></div>
+            </div>
+            <div class="btn-row">
+                <button class="btn btn-secondary" onclick="app.goToStep(0)">← Back</button>
+                <button class="btn btn-primary" id="btn-step1-run" disabled>Run AI Audit →</button>
+            </div>
+        </section>
+
+        <!-- STEP 2: Analyzing -->
+        <section id="step-2" class="fade-up hidden">
+            <div class="card">
+                <div class="analysis-message">
+                    <div class="analysis-spinner">
+                        <div class="analysis-ring"></div>
+                        <div class="analysis-ring"></div>
+                    </div>
+                    <h2>Auditing Account</h2>
+                    <p id="progress-text">Parsing account data…</p>
+                    <div class="analysis-dots">
+                        <div class="analysis-dot"></div>
+                        <div class="analysis-dot" style="animation-delay: 0.2s;"></div>
+                        <div class="analysis-dot" style="animation-delay: 0.4s;"></div>
+                        <div class="analysis-dot" style="animation-delay: 0.6s;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STEP 3: Results -->
+        <section id="step-3" class="fade-up hidden">
+            <div id="results-container"></div>
+            <div class="btn-row">
+                <button class="btn btn-secondary" onclick="app.goToStep(1)">← Re-upload</button>
+                <button class="btn btn-primary" onclick="app.goToStep(4)">Generate Documents →</button>
+            </div>
+        </section>
+
+        <!-- STEP 4: Export -->
+        <section id="step-4" class="fade-up hidden">
+            <div class="page-head">
+                <div class="step-tag">Step 05</div>
+                <h1>Export Documents</h1>
+                <p class="subtitle">A clean print tab opens — use Ctrl+P / Cmd+P to save as PDF</p>
+            </div>
+            <div class="export-grid">
+                <div class="export-card">
+                    <div class="export-icon">📋</div>
+                    <div>
+                        <div class="export-title">Audit Report</div>
+                        <p class="export-desc">Full technical audit with scores per category, detailed findings, and prioritized recommendations.</p>
+                    </div>
+                    <div class="export-divider"></div>
+                    <ul class="export-features">
+                        <li>✓ Overall grade</li>
+                        <li>✓ 4 category scores</li>
+                        <li>✓ Findings & recommendations</li>
+                    </ul>
+                    <button class="btn btn-primary" onclick="app.printAudit()">🖨 Print Audit Report</button>
+                </div>
+
+                <div class="export-card" style="border-color: var(--purple);">
+                    <div class="export-icon">🎯</div>
+                    <div>
+                        <div class="export-title">Sales Pitch</div>
+                        <p class="export-desc">Narrative pitch derived from findings — designed to convert the client into a managed services engagement.</p>
+                    </div>
+                    <div class="export-divider"></div>
+                    <ul class="export-features">
+                        <li>✓ Pain-point opener</li>
+                        <li>✓ Proof points</li>
+                        <li>✓ Value proposition & CTA</li>
+                    </ul>
+                    <button class="btn btn-primary" style="background: rgba(124, 58, 237, 0.12); border-color: var(--purple); color: #c4b5fd;" onclick="app.printPitch()">
+                        🖨 Print Sales Pitch
+                    </button>
+                </div>
+            </div>
+
+            <div id="pitch-preview" class="card hidden">
+                <div style="display: inline-flex; align-items: center; gap: 6px; padding: 3px 12px; background: rgba(124, 58, 237, 0.1); border: 1px solid rgba(124, 58, 237, 0.3); border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: #a78bfa; margin-bottom: 20px;">
+                    Sales Pitch Preview
+                </div>
+                <h3 style="font-size: 21px; font-weight: 700; color: var(--text-primary); margin: 0 0 10px; line-height: 1.35;" id="pitch-headline"></h3>
+                <p style="color: #6b7a99; line-height: 1.75; margin: 0 0 14px; font-size: 14px;" id="pitch-opening"></p>
+                <div id="pitch-pain-points" style="margin-bottom: 14px;"></div>
+                <p style="color: #a78bfa; font-style: italic; font-size: 13px; line-height: 1.75; margin-bottom: 14px;" id="pitch-value"></p>
+                <div style="padding: 13px 18px; background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.2); border-radius: 8px; color: #93c5fd; font-weight: 700; font-size: 14px;" id="pitch-cta"></div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-secondary" onclick="app.goToStep(3)">← Back to Results</button>
+                <button class="btn btn-secondary" onclick="app.resetAll()">↺ New Audit</button>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // ─── Global App State ──────────────────────────────────────────────────
+        const STEPS = ["Setup", "Upload Data", "AI Analysis", "Results", "Export"];
+        const FILE_SLOTS = [
+            { id: "campaigns", label: "Campaigns Report", path: "Campaigns → Download as CSV/XLSX", hint: "Campaign, Status, Budget, Impressions, Clicks, Cost, Conversions, CTR, CPC", req: true, icon: "📊" },
+            { id: "keywords", label: "Keywords Report", path: "Keywords → Download as CSV/XLSX", hint: "Keyword, Match Type, Quality Score, Impressions, Clicks, Cost, Conversions", req: true, icon: "🔑" },
+            { id: "ads", label: "Ads Report", path: "Ads & Extensions → Download as CSV/XLSX", hint: "Ad type, Ad strength, Headlines, Descriptions, Impressions, Clicks, CTR", req: false, icon: "📝" },
+            { id: "searchTerms", label: "Search Terms Report", path: "Keywords → Search Terms → Download as CSV/XLSX", hint: "Search Term, Campaign, Impressions, Clicks, Cost, Conversions", req: false, icon: "🔍" },
+        ];
+
+        const PROGRESS_MSGS = [
+            "Parsing account data…",
+            "Auditing campaign structure…",
+            "Evaluating keyword quality…",
+            "Reviewing ad copy performance…",
+            "Assessing bidding & budget efficiency…",
+            "Calculating wasted spend…",
+            "Generating recommendations…",
+            "Building your report…",
+        ];
+
+        const SAMPLE_DATA = {
+            campaigns: [
+                { Campaign: "Brand - Search", Status: "Enabled", "Daily budget": "50", Impressions: "8234", Clicks: "1205", Cost: "1523.45", Conversions: "87", CTR: "14.64%", "Avg. CPC": "1.26" },
+                { Campaign: "Non-Brand - Search", Status: "Enabled", "Daily budget": "150", Impressions: "45231", Clicks: "892", Cost: "3245.67", Conversions: "23", CTR: "1.97%", "Avg. CPC": "3.64" },
+                { Campaign: "Competitor - Search", Status: "Enabled", "Daily budget": "50", Impressions: "12455", Clicks: "234", Cost: "892.10", Conversions: "8", CTR: "1.88%", "Avg. CPC": "3.81" },
+                { Campaign: "Display - Remarketing", Status: "Enabled", "Daily budget": "30", Impressions: "245678", Clicks: "1245", Cost: "623.45", Conversions: "12", CTR: "0.51%", "Avg. CPC": "0.50" },
+            ],
+            keywords: [
+                { Keyword: "[buy running shoes]", "Match type": "Exact", Campaign: "Non-Brand - Search", "Quality Score": "8", Impressions: "1234", Clicks: "145", Cost: "523.45", Conversions: "12", CTR: "11.75%" },
+                { Keyword: "shoes", "Match type": "Broad", Campaign: "Non-Brand - Search", "Quality Score": "3", Impressions: "23456", Clicks: "234", Cost: "892.10", Conversions: "4", CTR: "1.00%" },
+            ],
+            ads: [
+                { "Ad type": "Responsive search ad", Campaign: "Non-Brand - Search", "Ad group": "Running Shoes", "Ad strength": "Poor", Impressions: "23456", Clicks: "456", CTR: "1.94%", Conversions: "15" },
+            ],
+            searchTerms: [
+                { "Search term": "buy running shoes online", Campaign: "Non-Brand - Search", Impressions: "1234", Clicks: "45", Cost: "162.45", Conversions: "5" },
+                { "Search term": "free shoes", Campaign: "Non-Brand - Search", Impressions: "3456", Clicks: "89", Cost: "312.45", Conversions: "0" },
+            ],
+        };
+
+        const app = {
+            step: 0,
+            cfg: { agencyName: "", service: "Google Ads Management", clientName: "", clientIndustry: "", apiProvider: "openai", apiKey: "", openaiModel: "gpt-5.4-mini", anthropicModel: "claude-sonnet-4-5-20250929", geminiModel: "gemini-2.5-flash", openrouterModel: "openrouter/free" },
+            files: { campaigns: null, keywords: null, ads: null, searchTerms: null },
+            data: { campaigns: [], keywords: [], ads: [], searchTerms: [] },
+            results: null,
+            busy: false,
+
+            init() {
+                this.renderNav();
+                this.renderUploadSlots();
+                document.getElementById("btn-step0-next").onclick = () => this.validateAndStep(0);
+                document.getElementById("btn-step1-run").onclick = () => this.runAudit();
+                
+                // Add real-time validation to Step 0 inputs
+                const step0Inputs = ["cfg-agency", "cfg-client", "api-key"];
+                step0Inputs.forEach(inputId => {
+                    const input = document.getElementById(inputId);
+                    if (input) {
+                        input.addEventListener("input", () => this.updateStep0Status());
+                    }
+                });
+                
+                this.setApiProvider(this.cfg.apiProvider);
+                this.updateStep0Status();
+            },
+
+            renderNav() {
+                const nav = document.getElementById("nav-steps");
+                nav.innerHTML = STEPS.map((s, i) => {
+                    const isActive = i === this.step;
+                    const isComplete = i < this.step;
+                    return `
+                        <div class="nav-item ${isActive ? "active" : ""}">
+                            <div class="nav-dot ${isComplete ? "complete" : isActive ? "active" : ""}">
+                                ${isComplete ? "✓" : i + 1}
+                            </div>
+                            <span>${s}</span>
+                            ${i < STEPS.length - 1 ? '<div class="nav-sep"></div>' : ""}
+                        </div>
+                    `;
+                }).join("");
+            },
+
+            renderUploadSlots() {
+                const container = document.getElementById("upload-slots");
+                container.innerHTML = FILE_SLOTS.map(slot => `
+                    <label class="upload-row" id="upload-${slot.id}">
+                        <div class="upload-icon">${slot.icon}</div>
+                        <div class="upload-info">
+                            <div class="upload-label">
+                                ${slot.label}
+                                ${slot.req ? '<span class="upload-required">Required</span>' : ""}
+                            </div>
+                            <div class="upload-path">→ ${slot.path}</div>
+                            <div class="upload-hint">Columns: ${slot.hint}</div>
+                        </div>
+                        <div class="upload-status" id="status-${slot.id}">Upload CSV/Excel</div>
+                        <input type="file" accept=".csv,.xlsx,.xls" onchange="app.loadFile('${slot.id}', this.files[0])">
+                    </label>
+                `).join("");
+            },
+
+            setApiProvider(provider) {
+                this.cfg.apiProvider = provider;
+                const keyLabel = document.getElementById("api-key-label");
+                const keyInput = document.getElementById("api-key");
+                const keyHint = document.getElementById("api-key-hint");
+                const modelLabel = document.getElementById("api-model-label");
+                const modelInput = document.getElementById("api-model");
+                const modelHint = document.getElementById("api-model-hint");
+
+                const providerConfig = {
+                    openai: {
+                        keyLabel: "OpenAI API Key",
+                        keyPlaceholder: "Enter your OpenAI API key",
+                        keyHint: 'Get your key from the <a href="https://platform.openai.com/api-keys" target="_blank" style="color: var(--accent-light);">OpenAI Platform</a>. Keep this file for internal/local use only.',
+                        modelLabel: "OpenAI Model",
+                        modelValue: this.cfg.openaiModel || "gpt-5.4-mini",
+                        modelPlaceholder: "e.g. gpt-5.4-mini",
+                        modelHint: "Recommended: gpt-5.4-mini for cost-effective audits, or gpt-5.5 for highest quality."
+                    },
+                    anthropic: {
+                        keyLabel: "Claude / Anthropic API Key",
+                        keyPlaceholder: "Enter your Anthropic API key",
+                        keyHint: 'Get your key from the <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color: var(--accent-light);">Anthropic Console</a>. Browser-direct Claude calls use a BYOK-style request, so keep this local/internal only.',
+                        modelLabel: "Claude Model",
+                        modelValue: this.cfg.anthropicModel || "claude-sonnet-4-5-20250929",
+                        modelPlaceholder: "e.g. claude-sonnet-4-5-20250929",
+                        modelHint: "Recommended: Claude Sonnet for detailed audit reasoning and strong sales-pitch output."
+                    },
+                    gemini: {
+                        keyLabel: "Gemini API Key",
+                        keyPlaceholder: "Enter your Gemini API key",
+                        keyHint: 'Get a free Gemini API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color: var(--accent-light);">Google AI Studio</a>. Keep this file for internal/local use only.',
+                        modelLabel: "Gemini Model",
+                        modelValue: this.cfg.geminiModel || "gemini-2.5-flash",
+                        modelPlaceholder: "e.g. gemini-2.5-flash",
+                        modelHint: "Recommended: gemini-2.5-flash for large CSV/XLSX audits and lower-cost testing."
+                    },
+                    openrouter: {
+                        keyLabel: "OpenRouter API Key",
+                        keyPlaceholder: "Enter your OpenRouter API key",
+                        keyHint: 'Get your key from <a href="https://openrouter.ai/keys" target="_blank" style="color: var(--accent-light);">OpenRouter</a>. You can use free or paid OpenRouter model IDs.',
+                        modelLabel: "OpenRouter Model",
+                        modelValue: this.cfg.openrouterModel || "openrouter/free",
+                        modelPlaceholder: "e.g. openrouter/free or openai/gpt-5.2",
+                        modelHint: "Use openrouter/free for testing, or a larger paid model for 1,000-row audits."
+                    }
+                };
+
+                const c = providerConfig[provider] || providerConfig.openai;
+                keyLabel.textContent = c.keyLabel;
+                keyInput.placeholder = c.keyPlaceholder;
+                keyHint.innerHTML = c.keyHint;
+                modelLabel.textContent = c.modelLabel;
+                modelInput.value = c.modelValue;
+                modelInput.placeholder = c.modelPlaceholder;
+                modelHint.textContent = c.modelHint;
+            },
+
+            loadFile(id, file) {
+                if (!file) return;
+                this.files[id] = file;
+                this.parseCSV(file, id);
+                this.updateUploadStatus();
+                this.updateStep1Status();
+            },
+
+            parseCSV(file, id) {
+                const fileName = file.name.toLowerCase();
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                    try {
+                        let rows = [];
+
+                        if ((fileName.endsWith(".xlsx") || fileName.endsWith(".xls")) && window.XLSX) {
+                            const workbook = XLSX.read(e.target.result, { type: "array" });
+                            const firstSheet = workbook.SheetNames[0];
+                            rows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet], { defval: "" });
+                        } else if (window.XLSX) {
+                            const workbook = XLSX.read(e.target.result, { type: "string" });
+                            const firstSheet = workbook.SheetNames[0];
+                            rows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet], { defval: "" });
+                        } else {
+                            const csv = e.target.result;
+                            const lines = csv.trim().split(/\r?\n/);
+                            const headers = lines[0].split(",").map(h => h.trim().replace(/^"|"$/g, ""));
+                            rows = lines.slice(1).map(line => {
+                                const cells = line.split(",").map(c => c.trim().replace(/^"|"$/g, ""));
+                                const obj = {};
+                                headers.forEach((h, i) => obj[h] = cells[i] || "");
+                                return obj;
+                            });
+                        }
+
+                        this.data[id] = rows.filter(row => Object.values(row).some(value => String(value).trim() !== ""));
+                        this.updateUploadStatus();
+                        this.updateStep1Status();
+                    } catch (err) {
+                        console.error(err);
+                        this.showError(`Could not parse ${file.name}. Please upload a valid CSV, XLSX or XLS file.`);
+                    }
+                };
+
+                if (fileName.endsWith(".xlsx") || fileName.endsWith(".xls")) {
+                    reader.readAsArrayBuffer(file);
+                } else {
+                    reader.readAsText(file);
+                }
+            },
+
+            updateUploadStatus() {
+                FILE_SLOTS.forEach(slot => {
+                    const status = document.getElementById(`status-${slot.id}`);
+                    if (this.data[slot.id]?.length) {
+                        status.textContent = `✓ ${this.data[slot.id].length} rows`;
+                        status.classList.add("ready");
+                    } else {
+                        status.textContent = this.files[slot.id] ? this.files[slot.id].name : "Upload CSV/Excel";
+                        status.classList.remove("ready");
+                    }
+                });
+            },
+
+            updateStep0Status() {
+                const agencyName = document.getElementById("cfg-agency").value || "";
+                const clientName = document.getElementById("cfg-client").value || "";
+                const apiKey = document.getElementById("api-key").value || "";
+                const hasRequired = agencyName.trim() && clientName.trim() && apiKey.trim();
+                const btn = document.getElementById("btn-step0-next");
+                if (btn) {
+                    btn.disabled = !hasRequired;
+                }
+            },
+
+            updateStep1Status() {
+                const hasData = this.data.campaigns?.length > 0 || this.data.keywords?.length > 0;
+                document.getElementById("btn-step1-run").disabled = !hasData;
+            },
+
+            validateAndStep(fromStep) {
+                if (fromStep === 0) {
+                    this.cfg.agencyName = document.getElementById("cfg-agency").value;
+                    this.cfg.service = document.getElementById("cfg-service").value;
+                    this.cfg.clientName = document.getElementById("cfg-client").value;
+                    this.cfg.clientIndustry = document.getElementById("cfg-industry").value;
+                    this.cfg.apiKey = document.getElementById("api-key").value;
+                    const selectedModel = (document.getElementById("api-model")?.value || "").trim();
+                    if (this.cfg.apiProvider === "gemini") {
+                        this.cfg.geminiModel = selectedModel || "gemini-2.5-flash";
+                    } else if (this.cfg.apiProvider === "anthropic") {
+                        this.cfg.anthropicModel = selectedModel || "claude-sonnet-4-5-20250929";
+                    } else if (this.cfg.apiProvider === "openrouter") {
+                        this.cfg.openrouterModel = selectedModel || "openrouter/free";
+                    } else {
+                        this.cfg.openaiModel = selectedModel || "gpt-5.4-mini";
+                    }
+                    
+                    if (!this.cfg.agencyName || !this.cfg.clientName || !this.cfg.apiKey) {
+                        this.showError("Please fill in Agency Name, Client Name, and API Key");
+                        return;
+                    }
+                }
+                this.goToStep(fromStep + 1);
+            },
+
+            goToStep(n) {
+                document.querySelectorAll("section").forEach((s, i) => {
+                    s.classList.toggle("hidden", i !== n);
+                });
+                this.step = n;
+                this.renderNav();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            },
+
+            loadSampleData() {
+                this.data = JSON.parse(JSON.stringify(SAMPLE_DATA));
+                document.getElementById("cfg-client").value = "Demo Client - Footwear";
+                document.getElementById("cfg-industry").value = "E-commerce (Footwear)";
+                document.getElementById("cfg-agency").value = "Your Agency";
+                this.updateUploadStatus();
+                this.files.campaigns = { name: "sample_campaigns.csv" };
+                this.files.keywords = { name: "sample_keywords.csv" };
+                this.updateStep1Status();
+                this.showError("", false);
+            },
+
+            async runAudit() {
+                if (!this.data.campaigns?.length && !this.data.keywords?.length) {
+                    this.showError("Please upload at least Campaigns or Keywords data");
+                    return;
+                }
+                
+                this.goToStep(2);
+                this.busy = true;
+                let msgIndex = 0;
+                const msgInterval = setInterval(() => {
+                    msgIndex = Math.min(msgIndex + 1, PROGRESS_MSGS.length - 1);
+                    document.getElementById("progress-text").textContent = PROGRESS_MSGS[msgIndex];
+                }, 1500);
+
+                try {
+                    const summaries = Object.entries(this.data).reduce((acc, [k, v]) => {
+                        if (v?.length) {
+                            acc[k] = {
+                                rowCount: v.length,
+                                columns: Object.keys(v[0]),
+                                sample: v.slice(0, 1000),
+                            };
+                        }
+                        return acc;
+                    }, {});
+
+                    const prompt = `You are a senior Google Ads specialist auditing an account.
+Client: ${this.cfg.clientName} (${this.cfg.clientIndustry || "unspecified"})
+Agency: ${this.cfg.agencyName} — Service: ${this.cfg.service}
+
+DATA: ${JSON.stringify(summaries, null, 1)}
+
+CRITICAL: Return ONLY valid JSON. Do not use markdown, backticks, comments, preamble, or trailing text.
+Use concise strings. Avoid quotation marks inside string values. Use apostrophes instead of quotes within sentences.
+Limit each findings array to 2 items and each recommendations array to 2 items.
+Limit top_priorities to 3 items, pain_points to 3 items, and proof_points to 3 items.
+
+{
+  "overall_score": <integer 0-100>,
+  "overall_grade": <one of: "A+", "A", "B+", "B", "C+", "C", "D", "F">,
+  "executive_summary": "<2-3 sentences with specific data points>",
+  "monthly_spend_estimate": <number or null>,
+  "wasted_spend_estimate": <number or null>,
+  "criteria": {
+    "campaign_structure": { "score": <0-100>, "grade": <"A+"|"A"|"B+"|"B"|"C+"|"C"|"D"|"F">, "findings": [{ "type": <"critical" or "warning" or "good">, "title": "<title>", "detail": "<detail>" }], "recommendations": ["<rec1>", "<rec2>"] },
+    "keyword_quality": { "score": <0-100>, "grade": <"A+"|"A"|"B+"|"B"|"C+"|"C"|"D"|"F">, "findings": [{ "type": <"critical" or "warning" or "good">, "title": "<title>", "detail": "<detail>" }], "recommendations": ["<rec1>", "<rec2>"] },
+    "ad_copy_ctr": { "score": <0-100>, "grade": <"A+"|"A"|"B+"|"B"|"C+"|"C"|"D"|"F">, "findings": [{ "type": <"critical" or "warning" or "good">, "title": "<title>", "detail": "<detail>" }], "recommendations": ["<rec1>", "<rec2>"] },
+    "bidding_budget": { "score": <0-100>, "grade": <"A+"|"A"|"B+"|"B"|"C+"|"C"|"D"|"F">, "findings": [{ "type": <"critical" or "warning" or "good">, "title": "<title>", "detail": "<detail>" }], "recommendations": ["<rec1>", "<rec2>"] }
+  },
+  "top_priorities": [{ "priority": 1, "action": "<action>", "impact": "<outcome>", "effort": <"Low" or "Medium" or "High"> }],
+  "sales_pitch": {
+    "headline": "<hard-hitting headline>",
+    "opening": "<2-3 sentences>",
+    "pain_points": ["<point1>", "<point2>"],
+    "value_proposition": "<2-3 sentences>",
+    "proof_points": ["<point1>", "<point2>"],
+    "cta": "<call to action>",
+    "closing": "<1-2 sentences>"
+  }
+}`;
+
+                    const response = await this.callAPI(prompt);
+                    clearInterval(msgInterval);
+                    this.results = response;
+                    this.displayResults();
+                    this.goToStep(3);
+                } catch (err) {
+                    clearInterval(msgInterval);
+                    this.showError("Analysis failed: " + err.message);
+                    this.goToStep(1);
+                } finally {
+                    this.busy = false;
+                }
+            },
+
+            async callAPI(prompt) {
+                if (this.cfg.apiProvider === "gemini") {
+                    return await this.callGeminiAPI(prompt);
+                }
+                if (this.cfg.apiProvider === "anthropic") {
+                    return await this.callClaudeAPI(prompt);
+                }
+                if (this.cfg.apiProvider === "openrouter") {
+                    return await this.callOpenRouterAPI(prompt);
+                }
+                return await this.callOpenAIAPI(prompt);
+            },
+
+            async callOpenAIAPI(prompt) {
+                const model = this.cfg.openaiModel || "gpt-5.4-mini";
+                const response = await fetch("https://api.openai.com/v1/responses", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${this.cfg.apiKey}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        input: [
+                            {
+                                role: "system",
+                                content: "You are a senior Google Ads specialist. Return only valid JSON matching the requested audit structure. Do not include markdown, commentary, or trailing text."
+                            },
+                            {
+                                role: "user",
+                                content: prompt
+                            }
+                        ],
+                        text: {
+                            format: {
+                                type: "json_object"
+                            }
+                        },
+                        reasoning: {
+                            effort: "low"
+                        },
+                        max_output_tokens: 16000,
+                        store: false
+                    })
+                });
+
+                if (!response.ok) {
+                    let err;
+                    try {
+                        err = await response.json();
+                    } catch (_) {
+                        err = null;
+                    }
+                    throw new Error(err?.error?.message || `OpenAI API Error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                if (data.status === "incomplete") {
+                    throw new Error(`OpenAI response was incomplete: ${data.incomplete_details?.reason || "unknown reason"}. Reduce uploaded rows or use a larger model/output limit.`);
+                }
+
+                let text = data.output_text || "";
+                if (!text && Array.isArray(data.output)) {
+                    text = data.output
+                        .flatMap(item => item.content || [])
+                        .filter(content => content.type === "output_text" && content.text)
+                        .map(content => content.text)
+                        .join("");
+                }
+
+                return this.parseAIJson(text, "OpenAI", data);
+            },
+
+            async callClaudeAPI(prompt) {
+                const model = this.cfg.anthropicModel || "claude-sonnet-4-5-20250929";
+                const response = await fetch("https://api.anthropic.com/v1/messages", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-api-key": this.cfg.apiKey,
+                        "anthropic-version": "2023-06-01",
+                        "anthropic-dangerous-direct-browser-access": "true"
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        max_tokens: 12000,
+                        temperature: 0,
+                        system: "You are a senior Google Ads specialist. Return only valid JSON matching the requested audit structure. Do not include markdown, commentary, or trailing text.",
+                        messages: [
+                            {
+                                role: "user",
+                                content: prompt
+                            }
+                        ]
+                    })
+                });
+
+                if (!response.ok) {
+                    let err;
+                    try {
+                        err = await response.json();
+                    } catch (_) {
+                        err = null;
+                    }
+                    throw new Error(err?.error?.message || `Claude API Error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                if (data.stop_reason === "max_tokens") {
+                    throw new Error("Claude response was cut off because the output was too long. Reduce uploaded rows or use fewer files, then run again.");
+                }
+                const text = (data.content || [])
+                    .filter(part => part.type === "text" && part.text)
+                    .map(part => part.text)
+                    .join("");
+                return this.parseAIJson(text, "Claude", data);
+            },
+
+            async callOpenRouterAPI(prompt) {
+                const model = this.cfg.openrouterModel || "openrouter/free";
+                const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${this.cfg.apiKey}`,
+                        "Content-Type": "application/json",
+                        "HTTP-Referer": window.location.origin || "http://localhost",
+                        "X-OpenRouter-Title": "AdScope Audit Pro"
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        messages: [
+                            {
+                                role: "system",
+                                content: "You are a senior Google Ads specialist. Return only valid JSON matching the requested audit structure. Do not include markdown, commentary, or trailing text."
+                            },
+                            {
+                                role: "user",
+                                content: prompt
+                            }
+                        ],
+                        response_format: { type: "json_object" },
+                        temperature: 0,
+                        max_tokens: 12000
+                    })
+                });
+
+                if (!response.ok) {
+                    let err;
+                    try {
+                        err = await response.json();
+                    } catch (_) {
+                        err = null;
+                    }
+                    throw new Error(err?.error?.message || `OpenRouter API Error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const choice = data.choices?.[0];
+                if (choice?.finish_reason === "length") {
+                    throw new Error("OpenRouter response was cut off because the output was too long. Reduce uploaded rows or use a larger model/output limit.");
+                }
+                const text = choice?.message?.content || "";
+                return this.parseAIJson(text, "OpenRouter", data);
+            },
+
+            async callGeminiAPI(prompt) {
+                const model = this.cfg.geminiModel || "gemini-2.5-flash";
+                const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(this.cfg.apiKey)}`;
+
+                const responseSchema = {
+                    type: "OBJECT",
+                    required: ["overall_score", "overall_grade", "executive_summary", "criteria", "top_priorities", "sales_pitch"],
+                    properties: {
+                        overall_score: { type: "INTEGER" },
+                        overall_grade: { type: "STRING", enum: ["A+", "A", "B+", "B", "C+", "C", "D", "F"] },
+                        executive_summary: { type: "STRING" },
+                        monthly_spend_estimate: { type: "NUMBER", nullable: true },
+                        wasted_spend_estimate: { type: "NUMBER", nullable: true },
+                        criteria: {
+                            type: "OBJECT",
+                            required: ["campaign_structure", "keyword_quality", "ad_copy_ctr", "bidding_budget"],
+                            properties: {
+                                campaign_structure: { type: "OBJECT", properties: { score: { type: "INTEGER" }, grade: { type: "STRING" }, findings: { type: "ARRAY", items: { type: "OBJECT", properties: { type: { type: "STRING" }, title: { type: "STRING" }, detail: { type: "STRING" } } } }, recommendations: { type: "ARRAY", items: { type: "STRING" } } } },
+                                keyword_quality: { type: "OBJECT", properties: { score: { type: "INTEGER" }, grade: { type: "STRING" }, findings: { type: "ARRAY", items: { type: "OBJECT", properties: { type: { type: "STRING" }, title: { type: "STRING" }, detail: { type: "STRING" } } } }, recommendations: { type: "ARRAY", items: { type: "STRING" } } } },
+                                ad_copy_ctr: { type: "OBJECT", properties: { score: { type: "INTEGER" }, grade: { type: "STRING" }, findings: { type: "ARRAY", items: { type: "OBJECT", properties: { type: { type: "STRING" }, title: { type: "STRING" }, detail: { type: "STRING" } } } }, recommendations: { type: "ARRAY", items: { type: "STRING" } } } },
+                                bidding_budget: { type: "OBJECT", properties: { score: { type: "INTEGER" }, grade: { type: "STRING" }, findings: { type: "ARRAY", items: { type: "OBJECT", properties: { type: { type: "STRING" }, title: { type: "STRING" }, detail: { type: "STRING" } } } }, recommendations: { type: "ARRAY", items: { type: "STRING" } } } }
+                            }
+                        },
+                        top_priorities: { type: "ARRAY", items: { type: "OBJECT", properties: { priority: { type: "INTEGER" }, action: { type: "STRING" }, impact: { type: "STRING" }, effort: { type: "STRING", enum: ["Low", "Medium", "High"] } } } },
+                        sales_pitch: {
+                            type: "OBJECT",
+                            properties: {
+                                headline: { type: "STRING" },
+                                opening: { type: "STRING" },
+                                pain_points: { type: "ARRAY", items: { type: "STRING" } },
+                                value_proposition: { type: "STRING" },
+                                proof_points: { type: "ARRAY", items: { type: "STRING" } },
+                                cta: { type: "STRING" },
+                                closing: { type: "STRING" }
+                            }
+                        }
+                    }
+                };
+
+                const response = await fetch(endpoint, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        contents: [
+                            {
+                                role: "user",
+                                parts: [{ text: prompt }]
+                            }
+                        ],
+                        generationConfig: {
+                            temperature: 0,
+                            maxOutputTokens: 16384,
+                            responseMimeType: "application/json",
+                            responseSchema: responseSchema
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    let err;
+                    try {
+                        err = await response.json();
+                    } catch (_) {
+                        err = null;
+                    }
+                    throw new Error(err?.error?.message || `Gemini API Error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const candidate = data.candidates?.[0];
+                if (candidate?.finishReason === "MAX_TOKENS") {
+                    throw new Error("Gemini response was cut off because the output was too long. Reduce uploaded rows or use fewer files, then run again.");
+                }
+                const text = candidate?.content?.parts?.map(part => part.text || "").join("") || "";
+                return this.parseAIJson(text, "Gemini", data);
+            },
+
+            parseAIJson(text, providerName, rawData) {
+                text = (text || "").replace(/```json|```/g, "").trim();
+
+                const jsonMatch = text.match(/\{[\s\S]*\}/);
+                if (jsonMatch) {
+                    text = jsonMatch[0];
+                }
+
+                try {
+                    return JSON.parse(text);
+                } catch (parseErr) {
+                    const cleaned = text
+                        .replace(/,\s*([}\]])/g, "$1")
+                        .replace(/:\s*([a-zA-Z]+)([,}\]])/g, ': "$1"$2');
+
+                    try {
+                        return JSON.parse(cleaned);
+                    } catch (err2) {
+                        console.error(`${providerName} raw response:`, rawData);
+                        console.error(`${providerName} text response:`, text);
+                        throw new Error(`Failed to parse ${providerName} response: ${parseErr.message}`);
+                    }
+                }
+            },
+
+            displayResults() {
+                const r = this.results;
+                const categories = ["campaign_structure", "keyword_quality", "ad_copy_ctr", "bidding_budget"];
+                const catLabels = {
+                    campaign_structure: "⚙️ Campaign Structure & Settings",
+                    keyword_quality: "🔑 Keyword Quality & Wasted Spend",
+                    ad_copy_ctr: "📝 Ad Copy & CTR",
+                    bidding_budget: "💰 Bidding Strategy & Budget",
+                };
+
+                const scoreColor = (s) => 
+                    s >= 80 ? "#10b981" : s >= 60 ? "#3b82f6" : s >= 40 ? "#f59e0b" : "#ef4444";
+
+                let html = `
+                    <div class="results-banner">
+                        <div class="grade-box">
+                            <div class="grade-large" style="color: ${scoreColor(r.overall_score)};">${r.overall_grade}</div>
+                            <div class="grade-label">Overall Grade</div>
+                            <div class="grade-score" style="color: ${scoreColor(r.overall_score)};">${r.overall_score}<span style="font-size: 14px; color: #374151;">/100</span></div>
+                        </div>
+                        <div class="results-summary">
+                            <div class="results-summary-tag">${this.cfg.clientName} · Google Ads Audit</div>
+                            <p class="results-summary-text">${r.executive_summary}</p>
+                            <div class="results-metrics">
+                                ${r.monthly_spend_estimate ? `<div class="metric-badge">📊 Monthly Spend: <strong>$${Number(r.monthly_spend_estimate).toLocaleString()}</strong></div>` : ""}
+                                ${r.wasted_spend_estimate ? `<div class="metric-badge danger">⚠ Wasted/mo: <strong>$${Number(r.wasted_spend_estimate).toLocaleString()}</strong></div>` : ""}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="score-grid">
+                `;
+
+                categories.forEach(catId => {
+                    const c = r.criteria?.[catId];
+                    if (!c) return;
+                    const col = scoreColor(c.score);
+                    html += `
+                        <div class="score-card" style="border-color: ${col}28;">
+                            <div class="score-card-header">
+                                <div class="score-card-label">${catLabels[catId]}</div>
+                                <div class="score-card-value">
+                                    <div class="score-number" style="color: ${col};">${c.score}</div>
+                                    <span class="score-max">/100</span>
+                                    <div class="score-status" style="color: ${col};">
+                                        ${c.score >= 80 ? "Excellent" : c.score >= 60 ? "Good" : c.score >= 40 ? "Needs Work" : "Critical"}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="score-bar" style="--fill: ${c.score}%;">
+                                <div class="score-bar-fill" style="background: ${col};"></div>
+                            </div>
+                            ${(c.findings || []).slice(0, 3).map((f, i) => `
+                                <div class="finding">
+                                    <div class="finding-type ${f.type}">● ${f.type.toUpperCase()}</div>
+                                    <div class="finding-title">${f.title}</div>
+                                    <div class="finding-detail">${f.detail}</div>
+                                </div>
+                            `).join("")}
+                        </div>
+                    `;
+                });
+
+                html += `</div>`;
+
+                if (r.top_priorities?.length) {
+                    html += `
+                        <div class="card">
+                            <div style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border);">🎯 Top Priority Actions</div>
+                            <div>
+                                ${r.top_priorities.map(p => `
+                                    <div class="priority-item">
+                                        <div class="priority-number">#${p.priority}</div>
+                                        <div class="priority-content">
+                                            <div class="priority-action">${p.action}</div>
+                                            <div class="priority-impact">${p.impact}</div>
+                                        </div>
+                                        <div class="priority-effort ${p.effort.toLowerCase()}">${p.effort} Effort</div>
+                                    </div>
+                                `).join("")}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                document.getElementById("results-container").innerHTML = html;
+
+                if (r.sales_pitch) {
+                    document.getElementById("pitch-preview").classList.remove("hidden");
+                    document.getElementById("pitch-headline").textContent = r.sales_pitch.headline;
+                    document.getElementById("pitch-opening").textContent = r.sales_pitch.opening;
+                    document.getElementById("pitch-pain-points").innerHTML = (r.sales_pitch.pain_points || [])
+                        .map(pt => `<div style="padding: 10px 14px; background: rgba(239, 68, 68, 0.05); border-left: 3px solid #ef4444; border-radius: 0 7px 7px 0; color: #fca5a5; font-size: 13px; margin-bottom: 7px; line-height: 1.5;">⚠ ${pt}</div>`)
+                        .join("");
+                    document.getElementById("pitch-value").textContent = r.sales_pitch.value_proposition;
+                    document.getElementById("pitch-cta").textContent = r.sales_pitch.cta;
+                }
+            },
+
+            printAudit() {
+                const r = this.results;
+                if (!r) {
+                    this.showError("Audit results not found. Please re-run the audit.");
+                    return;
+                }
+                const doc = window.open("", "_blank");
+                const cats = ["campaign_structure", "keyword_quality", "ad_copy_ctr", "bidding_budget"];
+                const catLabels = {
+                    campaign_structure: "⚙️ Campaign Structure & Settings",
+                    keyword_quality: "🔑 Keyword Quality & Wasted Spend",
+                    ad_copy_ctr: "📝 Ad Copy & CTR",
+                    bidding_budget: "💰 Bidding Strategy & Budget",
+                };
+
+                const catsHtml = cats.map(catId => {
+                    const c = r.criteria?.[catId];
+                    if (!c) return "";
+                    const col = c.score >= 60 ? "#1d4ed8" : c.score >= 40 ? "#b45309" : "#dc2626";
+                    const findings = (c.findings || []).map(f => `
+                        <div style="margin-bottom:10px;padding-left:14px;border-left:3px solid ${f.type==="critical"?"#dc2626":f.type==="warning"?"#d97706":"#16a34a"}">
+                            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:${f.type==="critical"?"#dc2626":f.type==="warning"?"#d97706":"#16a34a"};margin-bottom:3px">${f.type}</div>
+                            <div style="font-size:14px;font-weight:600;color:#1e293b">${f.title}</div>
+                            <div style="font-size:13px;color:#475569;margin-top:2px">${f.detail}</div>
+                        </div>`).join("");
+                    const recs = (c.recommendations || []).map(rec => `<div style="font-size:13px;color:#334155;margin-bottom:5px;padding-left:12px">→ ${rec}</div>`).join("");
+                    return `
+                        <div style="margin-bottom:32px;page-break-inside:avoid">
+                            <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #e2e8f0;padding-bottom:8px;margin-bottom:14px">
+                                <h2 style="font-size:17px;color:#0f172a;margin:0">${catLabels[catId]}</h2>
+                                <span style="font-size:20px;font-weight:800;color:${col}">${c.score}/100</span>
+                            </div>
+                            ${findings}
+                            ${recs ? `<div style="margin-top:14px"><div style="font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#64748b;margin-bottom:8px">Recommendations</div>${recs}</div>` : ""}
+                        </div>`;
+                }).join("");
+
+                const auditHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Google Ads Audit – ${this.cfg.clientName}</title>
+                    <style>
+                        body{font-family:Georgia,serif;padding:44px;max-width:820px;margin:0 auto;color:#1e293b;font-size:14px;line-height:1.6}
+                        h1{font-size:30px;margin:8px 0 4px;color:#0f172a}
+                        @media print{body{padding:20px}@page{margin:1.5cm}}
+                    </style></head><body>
+                    <div style="border-bottom:3px solid #1e3a5f;padding-bottom:20px;margin-bottom:28px">
+                        <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px">Prepared by ${this.cfg.agencyName}</div>
+                        <h1>Google Ads Audit Report</h1>
+                        <div style="font-size:15px;color:#334155">${this.cfg.clientName} · ${new Date().toLocaleDateString("en-US", {year:"numeric", month:"long", day:"numeric"})}</div>
+                    </div>
+                    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:22px;margin-bottom:32px;display:flex;gap:24px;align-items:flex-start">
+                        <div style="text-align:center;min-width:90px;background:#fff;border:2px solid #e2e8f0;border-radius:8px;padding:16px 12px">
+                            <div style="font-size:52px;font-weight:800;color:${r.overall_score>=60?"#1d4ed8":"#dc2626"};line-height:1">${r.overall_grade}</div>
+                            <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-top:4px">Overall</div>
+                            <div style="font-size:18px;font-weight:700;color:${r.overall_score>=60?"#1d4ed8":"#dc2626"};margin-top:4px">${r.overall_score}/100</div>
+                        </div>
+                        <div>
+                            <p style="color:#334155;line-height:1.7;margin:0 0 12px;font-size:15px">${r.executive_summary}</p>
+                            ${r.monthly_spend_estimate?`<div style="margin-bottom:6px;color:#334155"><strong>Est. Monthly Spend:</strong> $${Number(r.monthly_spend_estimate).toLocaleString()}</div>`:""}
+                            ${r.wasted_spend_estimate?`<div style="color:#dc2626;font-weight:700;font-size:15px">⚠ Est. Wasted Spend: $${Number(r.wasted_spend_estimate).toLocaleString()}</div>`:""}
+                        </div>
+                    </div>
+                    ${catsHtml}
+                    <div style="margin-top:56px;border-top:1px solid #e2e8f0;padding-top:16px;font-size:11px;color:#94a3b8;text-align:center">
+                        Confidential · Prepared by ${this.cfg.agencyName} · ${new Date().toLocaleDateString()}
+                    </div>
+                    </body></html>`;
+
+                if (!doc || doc.closed || typeof doc.document === "undefined") {
+                    // Popup blocked — download as file
+                    const blob = new Blob([auditHtml], { type: "text/html" });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `Audit-Report-${(this.cfg.clientName || "Client").replace(/\s+/g, "-")}.html`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    setTimeout(() => URL.revokeObjectURL(url), 2000);
+                    this.showError("Popup was blocked — the report has been downloaded as an HTML file. Open it and print with Ctrl+P / Cmd+P.");
+                    return;
+                }
+
+                doc.document.write(auditHtml);
+                doc.document.close();
+                setTimeout(() => { try { doc.print(); } catch(e) {} }, 600);
+            },
+
+            printPitch() {
+                const p = this.results && this.results.sales_pitch;
+                if (!p) {
+                    this.showError("Sales pitch data not found. Please re-run the audit.");
+                    return;
+                }
+
+                const painPoints = (p.pain_points || []).map(pt => `
+                    <div style="display:flex;gap:12px;margin-bottom:10px;padding:13px 16px;background:#fef2f2;border-left:4px solid #ef4444;border-radius:0 6px 6px 0">
+                        <span style="color:#dc2626;font-weight:700;margin-top:1px">▲</span>
+                        <span style="color:#1e293b;font-size:14px">${pt}</span>
+                    </div>`).join("");
+                const proofPts = (p.proof_points || []).map(pt => `
+                    <div style="display:flex;gap:12px;margin-bottom:10px">
+                        <span style="color:#2563eb;font-weight:700">→</span>
+                        <span style="color:#334155;font-size:14px">${pt}</span>
+                    </div>`).join("");
+
+                const htmlContent = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Proposal – ${this.cfg.clientName}</title>
+                    <style>
+                        body{font-family:Georgia,serif;padding:52px;max-width:820px;margin:0 auto;color:#1e293b;font-size:14px;line-height:1.6}
+                        @media print{body{padding:24px}@page{margin:1.5cm}}
+                    </style></head><body>
+                    <div style="margin-bottom:36px">
+                        <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px">Prepared exclusively for ${this.cfg.clientName}</div>
+                        <div style="font-size:11px;color:#64748b;margin-bottom:24px">By ${this.cfg.agencyName}</div>
+                        <h1 style="font-size:34px;color:#0f172a;line-height:1.25;margin:0 0 16px;font-weight:800">${p.headline}</h1>
+                        <div style="width:64px;height:5px;background:#2563eb;border-radius:3px;margin-bottom:28px"></div>
+                    </div>
+                    <p style="font-size:16px;color:#334155;line-height:1.85;margin-bottom:28px">${p.opening}</p>
+                    <h2 style="font-size:18px;color:#0f172a;font-weight:700;margin-bottom:14px">What We Found In Your Account</h2>
+                    ${painPoints}
+                    <h2 style="font-size:18px;color:#0f172a;font-weight:700;margin:30px 0 12px">How We'll Fix It</h2>
+                    <p style="font-size:15px;color:#334155;line-height:1.8;margin-bottom:24px">${p.value_proposition}</p>
+                    ${proofPts ? `<h2 style="font-size:18px;color:#0f172a;font-weight:700;margin:30px 0 12px">The Numbers Don't Lie</h2>${proofPts}` : ""}
+                    <div style="margin:44px 0;padding:30px;background:#eff6ff;border:2px solid #bfdbfe;border-radius:10px;text-align:center">
+                        <div style="font-size:21px;font-weight:800;color:#1e40af;margin-bottom:10px">${p.cta}</div>
+                        <div style="font-size:13px;color:#3b82f6;font-weight:600">${this.cfg.agencyName} · ${this.cfg.service}</div>
+                    </div>
+                    <p style="font-size:14px;color:#475569;line-height:1.8;font-style:italic">${p.closing || ""}</p>
+                    <div style="margin-top:52px;border-top:1px solid #e2e8f0;padding-top:16px;font-size:11px;color:#94a3b8">
+                        ${this.cfg.agencyName} · Based on Google Ads Audit conducted ${new Date().toLocaleDateString()}
+                    </div>
+                    </body></html>`;
+
+                // Try popup first; fall back to Blob download if blocked
+                try {
+                    const doc = window.open("", "_blank");
+                    if (!doc || doc.closed || typeof doc.document === "undefined") {
+                        throw new Error("Popup blocked");
+                    }
+                    doc.document.write(htmlContent);
+                    doc.document.close();
+                    setTimeout(() => { try { doc.print(); } catch(e) {} }, 600);
+                } catch (e) {
+                    // Popup was blocked — download as HTML file instead
+                    const blob = new Blob([htmlContent], { type: "text/html" });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `Sales-Pitch-${(this.cfg.clientName || "Client").replace(/\s+/g, "-")}.html`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    setTimeout(() => URL.revokeObjectURL(url), 2000);
+                    this.showError("Popup was blocked by your browser — the pitch has been downloaded as an HTML file instead. Open it and print with Ctrl+P / Cmd+P.");
+                }
+            },
+
+            resetAll() {
+                this.step = 0;
+                this.results = null;
+                this.data = { campaigns: [], keywords: [], ads: [], searchTerms: [] };
+                this.files = { campaigns: null, keywords: null, ads: null, searchTerms: null };
+                this.goToStep(0);
+                document.getElementById("cfg-agency").value = "";
+                document.getElementById("cfg-client").value = "";
+                document.getElementById("cfg-industry").value = "";
+                document.getElementById("cfg-service").value = "Google Ads Management";
+                document.getElementById("api-key").value = "";
+                document.querySelector('input[name="api-choice"][value="openai"]').checked = true;
+                this.cfg.apiKey = "";
+                this.setApiProvider("openai");
+                this.updateStep0Status();
+            },
+
+            showError(msg, show = true) {
+                const bar = document.getElementById("error-bar");
+                if (show && msg) {
+                    document.getElementById("error-text").textContent = msg;
+                    bar.classList.remove("hidden");
+                } else {
+                    bar.classList.add("hidden");
+                }
+            },
+
+            clearError() {
+                this.showError("", false);
+            },
+        };
+
+        // Initialize
+        window.addEventListener("load", () => app.init());
+    </script>
+</body>
+</html>
